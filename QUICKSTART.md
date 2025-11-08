@@ -8,20 +8,28 @@
 # Navigate to project directory
 cd ~/jukebox
 
-# Run setup script
-./setup.sh
+# For Pi Zero 2 W - use lite version (more stable)
+chmod +x setup_lite.sh
+./setup_lite.sh
 
-# If you get permission error, run:
+# For Pi 3/4/5 - use regular version
 chmod +x setup.sh
 ./setup.sh
 ```
 
-**Note:** Setup will install system dependencies (requires sudo) and Python packages.
+**⚠️ Pi Zero 2 W Users:**
+- Use `setup_lite.sh` (not setup.sh)
+- Ensure you have a **5V 3A power supply** or Pi will reboot!
+- Takes 45-60 minutes to complete
+- Be patient during pygame installation (20+ minutes)
 
-**If pygame fails to install:**
+**If Pi keeps rebooting:**
 ```bash
-./install_dependencies.sh  # Install SDL2 libraries
-./setup.sh                 # Try again
+# Check power supply (most common issue)
+vcgencmd get_throttled
+
+# If output is not 0x0, you have power problems!
+# See POWER_ISSUES.md for solutions
 ```
 
 ### 2. Enable SPI (Required for RFID)

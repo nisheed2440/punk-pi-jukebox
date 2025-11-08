@@ -52,9 +52,17 @@ cd ~
 git clone <your-repo-url> jukebox
 cd jukebox
 
-# Run automated setup (installs system dependencies and Python packages)
+# For Pi Zero 2 W - use lite version (slower but more stable)
+./setup_lite.sh
+
+# For Pi 3/4/5 - use regular version
 ./setup.sh
 ```
+
+**⚠️ Important for Pi Zero 2 W:**
+- Use official 5V 3A power supply (insufficient power causes reboots!)
+- Setup takes 45-60 minutes
+- See `POWER_ISSUES.md` if you experience crashes
 
 **Or manually:**
 
