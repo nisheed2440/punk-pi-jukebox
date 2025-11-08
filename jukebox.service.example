@@ -1,0 +1,17 @@
+[Unit]
+Description=Raspberry Pi Jukebox with NFC Support
+After=multi-user.target sound.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/jukebox
+Environment="DISPLAY=:0"
+Environment="XAUTHORITY=/home/pi/.Xauthority"
+ExecStart=/home/pi/jukebox/venv/bin/python /home/pi/jukebox/jukebox_app.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target
+
