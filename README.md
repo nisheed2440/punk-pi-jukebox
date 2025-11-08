@@ -17,7 +17,7 @@ A Python-based jukebox application for Raspberry Pi Zero 2 W with NFC/RFID suppo
 - Raspberry Pi Zero 2 W (or any Raspberry Pi)
 - MFRC522 RFID/NFC Reader
 - NFC tags (MIFARE Classic or compatible)
-- Display (HDMI or DSI)
+- Display (720x720 recommended, HDMI or DSI)
 - Speakers or audio output
 
 ## MFRC522 Wiring

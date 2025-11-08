@@ -37,7 +37,7 @@ class JukeboxApp:
         """
         self.root = root
         self.root.title("Jukebox")
-        self.root.geometry("800x480")
+        self.root.geometry("720x720")
         self.root.configure(bg='black')
         
         # Make fullscreen (comment out for testing)
@@ -463,7 +463,7 @@ class JukeboxApp:
                 img = self.fallback_image
             
             # Resize to fit window while maintaining aspect ratio
-            img.thumbnail((800, 480), Image.Resampling.LANCZOS)
+            img.thumbnail((720, 720), Image.Resampling.LANCZOS)
             
             # Convert to PhotoImage
             photo = ImageTk.PhotoImage(img)

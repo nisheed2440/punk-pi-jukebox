@@ -9,7 +9,7 @@ This guide will walk you through setting up your jukebox from scratch.
 - ✅ MFRC522 RFID/NFC Reader module
 - ✅ NFC tags (MIFARE Classic or compatible)
 - ✅ MicroSD card (8GB+ recommended)
-- ✅ Display (HDMI/DSI connected)
+- ✅ Display (720x720, HDMI/DSI connected)
 - ✅ Speakers or headphones
 - ✅ Power supply
 

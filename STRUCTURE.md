@@ -136,19 +136,20 @@ UI Updates ← Shows album art + song info
 ## UI Components
 
 ```
-┌─────────────────────────────────────────┐
-│ ⚙ (Debug Menu)                         │  ← Debug icon (top-left)
-│                                         │
-│                                         │
-│         [Album Art Display]             │  ← Album cover image
-│                                         │
-│                                         │
-│    ─────────────────────────────        │
-│         Song Title                      │  ← Song info overlay
-│         Artist Name                     │     (on top of album art)
-│         Album Name                      │
-│    ─────────────────────────────        │
-└─────────────────────────────────────────┘
+┌────────────────────────────────┐
+│ ⚙                             │  ← Debug icon (top-left)
+│                               │
+│                               │
+│    [Album Art Display]        │  ← Album cover image
+│         720x720               │     (square display)
+│                               │
+│                               │
+│  ─────────────────────────    │
+│      Song Title               │  ← Song info overlay
+│      Artist Name              │     (on album art)
+│      Album Name               │
+│  ─────────────────────────    │
+└────────────────────────────────┘
 ```
 
 ### Debug Menu Features
@@ -189,7 +190,7 @@ RST      →     GPIO 25 (Pin 22)
 - Python 3.7+
 - SPI enabled (Raspberry Pi)
 - Audio output configured
-- Display (800x480 recommended)
+- Display (720x720)
 
 ## Common Operations
 
@@ -242,15 +243,15 @@ if not filename.lower().endswith(('.mp3', '.wav', '.ogg', '.flac', '.m4a', '.aac
 ```
 
 ### Change UI Size
-Edit `jukebox_app.py`, line ~38:
+Edit `jukebox_app.py`, line ~40:
 ```python
-self.root.geometry("800x480")  # Change dimensions
+self.root.geometry("720x720")  # Change dimensions
 ```
 
 ### Customize Album Art Size
-Edit `jukebox_app.py`, line ~399:
+Edit `jukebox_app.py`, line ~466:
 ```python
-img.thumbnail((800, 480), Image.Resampling.LANCZOS)  # Change size
+img.thumbnail((720, 720), Image.Resampling.LANCZOS)  # Change size
 ```
 
 ## License
