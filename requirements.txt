@@ -1,0 +1,6 @@
+pygame==2.5.2
+pillow==10.1.0
+mfrc522==0.0.7
+spidev==3.6
+RPi.GPIO==0.7.1
+
