@@ -52,11 +52,21 @@ cd ~
 git clone <your-repo-url> jukebox
 cd jukebox
 
+# Run automated setup (installs system dependencies and Python packages)
+./setup.sh
+```
+
+**Or manually:**
+
+```bash
+# Install system dependencies first
+./install_dependencies.sh
+
 # Create virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# Install dependencies
+# Install Python packages
 pip install -r requirements.txt
 ```
 
@@ -184,6 +194,27 @@ The app stores configuration in `config.json`:
 - M4A (.m4a)
 
 ## Troubleshooting
+
+### Pygame Installation Fails (SDL2 Error)
+
+If you get an error about `sdl2-config` not found:
+
+```bash
+# Install SDL2 dependencies
+./install_dependencies.sh
+```
+
+Or manually:
+```bash
+sudo apt-get update
+sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+```
+
+Then try again:
+```bash
+source venv/bin/activate
+pip install pygame
+```
 
 ### RFID Reader Not Working
 

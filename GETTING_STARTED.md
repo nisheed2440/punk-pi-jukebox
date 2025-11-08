@@ -65,7 +65,30 @@ sudo apt upgrade -y
 ### Install Dependencies
 
 ```bash
-sudo apt install -y python3-pip python3-venv git
+sudo apt install -y python3-pip python3-venv git python3-dev
+```
+
+### Install SDL2 Libraries (Required for Pygame)
+
+**Important:** These must be installed BEFORE running setup.sh
+
+```bash
+sudo apt install -y \
+    libsdl2-dev \
+    libsdl2-image-dev \
+    libsdl2-mixer-dev \
+    libsdl2-ttf-dev \
+    libfreetype6-dev \
+    libportmidi-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    libpng-dev
+```
+
+Or use the provided script:
+```bash
+cd ~/jukebox
+./install_dependencies.sh
 ```
 
 ## 📥 Step 3: Install Jukebox

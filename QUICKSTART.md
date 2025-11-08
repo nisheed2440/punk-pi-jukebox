@@ -16,6 +16,14 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+**Note:** Setup will install system dependencies (requires sudo) and Python packages.
+
+**If pygame fails to install:**
+```bash
+./install_dependencies.sh  # Install SDL2 libraries
+./setup.sh                 # Try again
+```
+
 ### 2. Enable SPI (Required for RFID)
 
 ```bash

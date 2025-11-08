@@ -19,6 +19,33 @@ fi
 PYTHON_VERSION=$(python3 --version 2>&1 | awk '{print $2}')
 echo "Python version: $PYTHON_VERSION"
 
+# Install system dependencies for pygame and other packages
+echo ""
+echo "Installing system dependencies..."
+echo "This requires sudo and may ask for your password."
+
+sudo apt-get update
+sudo apt-get install -y \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    libsdl2-dev \
+    libsdl2-image-dev \
+    libsdl2-mixer-dev \
+    libsdl2-ttf-dev \
+    libfreetype6-dev \
+    libportmidi-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    libpng-dev
+
+if [ $? -ne 0 ]; then
+    echo "⚠ Warning: Some system dependencies may not have installed"
+    echo "  Continuing anyway..."
+else
+    echo "✓ System dependencies installed"
+fi
+
 # Create virtual environment
 echo ""
 echo "Creating virtual environment..."
