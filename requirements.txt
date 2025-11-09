@@ -1,6 +1,12 @@
+# Core dependencies
 pygame==2.5.2
-pillow==10.1.0
 mfrc522==0.0.7
 spidev==3.6
 RPi.GPIO==0.7.1
+
+# Optional - uses pygame for image display if Pillow not available
+# Pillow is only needed for loading album art files
+# You can skip it and use system package instead:
+#   sudo apt-get install python3-pil
+pillow==10.1.0
 

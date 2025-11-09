@@ -8,8 +8,20 @@ import pygame
 import logging
 import os
 import threading
-from PIL import Image, ImageTk
 from typing import Optional
+
+# Try to import PIL/Pillow, fall back to pygame for image loading
+try:
+    from PIL import Image, ImageTk
+    PILLOW_AVAILABLE = True
+    logger = logging.getLogger(__name__)
+    logger.info("Using PIL/Pillow for image processing")
+except ImportError:
+    PILLOW_AVAILABLE = False
+    Image = None
+    ImageTk = None
+    logger = logging.getLogger(__name__)
+    logger.warning("PIL/Pillow not available, using pygame for images")
 
 from rfid_reader import RFIDReader
 from music_library import MusicLibrary, Song
@@ -89,22 +101,42 @@ class JukeboxApp:
         """Load or create fallback album art"""
         fallback_path = "fallback_albumart.png"
         
-        if os.path.exists(fallback_path):
+        if PILLOW_AVAILABLE:
+            # Use PIL/Pillow if available
+            if os.path.exists(fallback_path):
+                try:
+                    self.fallback_image = Image.open(fallback_path)
+                    logger.info("Loaded fallback album art")
+                    return
+                except Exception as e:
+                    logger.error(f"Error loading fallback image: {e}")
+            
+            # Create a simple fallback image
             try:
-                self.fallback_image = Image.open(fallback_path)
-                logger.info("Loaded fallback album art")
-                return
+                img = Image.new('RGB', (400, 400), color='#1a1a1a')
+                img.save(fallback_path)
+                self.fallback_image = img
+                logger.info("Created fallback album art")
             except Exception as e:
-                logger.error(f"Error loading fallback image: {e}")
-        
-        # Create a simple fallback image
-        try:
-            img = Image.new('RGB', (400, 400), color='#1a1a1a')
-            img.save(fallback_path)
-            self.fallback_image = img
-            logger.info("Created fallback album art")
-        except Exception as e:
-            logger.error(f"Error creating fallback image: {e}")
+                logger.error(f"Error creating fallback image: {e}")
+        else:
+            # Use pygame to create fallback
+            try:
+                if os.path.exists(fallback_path):
+                    # Try to load with pygame
+                    pygame_img = pygame.image.load(fallback_path)
+                    self.fallback_image = pygame_img
+                    logger.info("Loaded fallback album art (pygame)")
+                else:
+                    # Create with pygame
+                    surface = pygame.Surface((400, 400))
+                    surface.fill((26, 26, 26))
+                    pygame.image.save(surface, fallback_path)
+                    self.fallback_image = surface
+                    logger.info("Created fallback album art (pygame)")
+            except Exception as e:
+                logger.error(f"Error with fallback image: {e}")
+                self.fallback_image = None
     
     def build_ui(self):
         """Build main UI"""
@@ -457,23 +489,58 @@ class JukeboxApp:
     def display_album_art(self, image_path: Optional[str]):
         """Display album art"""
         try:
-            if image_path and os.path.exists(image_path):
-                img = Image.open(image_path)
+            if PILLOW_AVAILABLE:
+                # Use PIL/Pillow method
+                if image_path and os.path.exists(image_path):
+                    img = Image.open(image_path)
+                else:
+                    img = self.fallback_image
+                
+                if img:
+                    # Resize to fit window while maintaining aspect ratio
+                    img.thumbnail((720, 720), Image.Resampling.LANCZOS)
+                    
+                    # Convert to PhotoImage
+                    photo = ImageTk.PhotoImage(img)
+                    
+                    # Update label
+                    self.album_art_label.config(image=photo)
+                    self.album_art_label.image = photo  # Keep a reference
             else:
-                img = self.fallback_image
-            
-            # Resize to fit window while maintaining aspect ratio
-            img.thumbnail((720, 720), Image.Resampling.LANCZOS)
-            
-            # Convert to PhotoImage
-            photo = ImageTk.PhotoImage(img)
-            
-            # Update label
-            self.album_art_label.config(image=photo)
-            self.album_art_label.image = photo  # Keep a reference
+                # Use pygame method
+                if image_path and os.path.exists(image_path):
+                    try:
+                        pygame_img = pygame.image.load(image_path)
+                    except:
+                        pygame_img = self.fallback_image
+                else:
+                    pygame_img = self.fallback_image
+                
+                if pygame_img:
+                    # Scale pygame surface to fit window
+                    size = pygame_img.get_size()
+                    scale_factor = min(720/size[0], 720/size[1])
+                    new_size = (int(size[0]*scale_factor), int(size[1]*scale_factor))
+                    scaled_img = pygame.transform.scale(pygame_img, new_size)
+                    
+                    # Convert pygame surface to PhotoImage via PPM
+                    img_str = pygame.image.tostring(scaled_img, 'RGB')
+                    w, h = scaled_img.get_size()
+                    
+                    # Create PPM format image data
+                    ppm = f'P6 {w} {h} 255 '.encode() + img_str
+                    
+                    # Create PhotoImage from PPM data
+                    photo = tk.PhotoImage(width=w, height=h, data=ppm, format='PPM')
+                    
+                    # Update label
+                    self.album_art_label.config(image=photo)
+                    self.album_art_label.image = photo  # Keep a reference
         
         except Exception as e:
             logger.error(f"Error displaying album art: {e}")
+            # Show solid color as last resort
+            self.album_art_label.config(bg='#1a1a1a')
     
     def check_pygame_events(self):
         """Check for pygame events (song end)"""

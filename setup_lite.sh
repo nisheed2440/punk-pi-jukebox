@@ -109,8 +109,23 @@ sleep 5
 
 # Install Python packages ONE AT A TIME
 echo ""
-echo "Installing Python packages (this will take 15-30 minutes)..."
-echo "Installing pillow..."
+echo "Installing Python packages..."
+echo ""
+echo "Installing pygame (this is the slowest - may take 20+ minutes)..."
+echo "Please be patient, the Pi Zero 2 W is slow at compiling..."
+pip install pygame==2.5.2 --no-cache-dir
+
+if [ $? -ne 0 ]; then
+    echo "❌ pygame installation failed!"
+    echo "   pygame is required for the jukebox"
+    exit 1
+fi
+echo "✓ pygame installed"
+sleep 10
+
+echo ""
+echo "Installing Pillow (optional, for better image quality)..."
+echo "This may fail on Pi Zero 2 W - that's OK, we'll use pygame for images"
 pip install pillow==10.1.0 --no-cache-dir
 
 if [ $? -ne 0 ]; then
@@ -118,16 +133,22 @@ if [ $? -ne 0 ]; then
     pip install pillow==9.5.0 --no-cache-dir
     
     if [ $? -ne 0 ]; then
-        echo "⚠ Pillow still failing, using system package instead..."
-        sudo apt-get install -y python3-pil
-        echo "✓ Using system Pillow package"
+        echo "⚠ Pillow compilation failed"
+        echo "  Trying system package..."
+        sudo apt-get install -y python3-pil 2>/dev/null
+        
+        if [ $? -ne 0 ]; then
+            echo "⚠ Skipping Pillow - will use pygame for images instead"
+            echo "  This is fine! The app will work normally."
+        else
+            echo "✓ Using system Pillow package"
+        fi
+    else
+        echo "✓ Pillow 9.5.0 installed"
     fi
+else
+    echo "✓ Pillow installed"
 fi
-sleep 10
-
-echo "Installing pygame (this is the slowest - may take 20+ minutes)..."
-echo "Please be patient, the Pi Zero 2 W is slow at compiling..."
-pip install pygame==2.5.2 --no-cache-dir
 sleep 10
 
 echo "Installing mfrc522..."
