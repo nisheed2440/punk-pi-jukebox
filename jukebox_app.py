@@ -45,6 +45,11 @@ class JukeboxApp:
         # Make fullscreen (comment out for testing)
         # self.root.attributes('-fullscreen', True)
         
+        # Initialize pygame (needed for event system and images)
+        # Use dummy video driver since we're using Tkinter for GUI
+        os.environ['SDL_VIDEODRIVER'] = 'dummy'
+        pygame.init()
+        
         # Initialize components
         self.config = ConfigManager()
         self.rfid_reader = RFIDReader(mock_mode=mock_rfid)
