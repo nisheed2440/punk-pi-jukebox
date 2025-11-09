@@ -71,6 +71,7 @@ pip install --upgrade pip
 # Install dependencies
 echo ""
 echo "Installing dependencies..."
+echo "Note: Only pygame, mfrc522, spidev, and RPi.GPIO (no Pillow needed)"
 pip install -r requirements.txt
 
 if [ $? -ne 0 ]; then

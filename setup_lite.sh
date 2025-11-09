@@ -124,33 +124,6 @@ echo "✓ pygame installed"
 sleep 10
 
 echo ""
-echo "Installing Pillow (optional, for better image quality)..."
-echo "This may fail on Pi Zero 2 W - that's OK, we'll use pygame for images"
-pip install pillow==10.1.0 --no-cache-dir
-
-if [ $? -ne 0 ]; then
-    echo "⚠ Pillow installation failed, trying older version..."
-    pip install pillow==9.5.0 --no-cache-dir
-    
-    if [ $? -ne 0 ]; then
-        echo "⚠ Pillow compilation failed"
-        echo "  Trying system package..."
-        sudo apt-get install -y python3-pil 2>/dev/null
-        
-        if [ $? -ne 0 ]; then
-            echo "⚠ Skipping Pillow - will use pygame for images instead"
-            echo "  This is fine! The app will work normally."
-        else
-            echo "✓ Using system Pillow package"
-        fi
-    else
-        echo "✓ Pillow 9.5.0 installed"
-    fi
-else
-    echo "✓ Pillow installed"
-fi
-sleep 10
-
 echo "Installing mfrc522..."
 pip install mfrc522==0.0.7 --no-cache-dir
 sleep 5
