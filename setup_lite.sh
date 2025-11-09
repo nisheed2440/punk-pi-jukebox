@@ -113,15 +113,51 @@ echo "Installing Python packages..."
 echo ""
 echo "Installing pygame (this is the slowest - may take 20+ minutes)..."
 echo "Please be patient, the Pi Zero 2 W is slow at compiling..."
-pip install pygame==2.5.2 --no-cache-dir
+
+# Try pre-built wheel first (faster, less memory)
+pip install pygame --prefer-binary --no-cache-dir
 
 if [ $? -ne 0 ]; then
-    echo "❌ pygame installation failed!"
-    echo "   pygame is required for the jukebox"
-    exit 1
+    echo "⚠ Pre-built pygame failed, trying system package..."
+    
+    # Install system pygame
+    sudo apt-get install -y python3-pygame
+    
+    if [ $? -ne 0 ]; then
+        echo "⚠ System package failed, trying to build from source..."
+        echo "   This may take 20-30 minutes..."
+        
+        # Last resort: build from source with no cache
+        pip install pygame==2.5.2 --no-cache-dir --no-binary pygame
+        
+        if [ $? -ne 0 ]; then
+            echo "❌ All pygame installation methods failed!"
+            echo ""
+            echo "This is usually caused by:"
+            echo "  1. Insufficient power supply"
+            echo "  2. Low memory (increase swap)"
+            echo "  3. Missing SDL2 libraries"
+            echo ""
+            echo "Try:"
+            echo "  1. Check power: vcgencmd get_throttled"
+            echo "  2. Increase swap to 1GB (see POWER_ISSUES.md)"
+            echo "  3. Run: ./install_dependencies.sh"
+            echo "  4. Reboot and try again"
+            exit 1
+        fi
+    else
+        echo "✓ Using system pygame package"
+        # Recreate venv with system packages
+        deactivate
+        cd ..
+        rm -rf venv
+        python3 -m venv --system-site-packages venv
+        source venv/bin/activate
+        cd -
+    fi
 fi
 echo "✓ pygame installed"
-sleep 10
+sleep 5
 
 echo ""
 echo "Installing mfrc522..."
