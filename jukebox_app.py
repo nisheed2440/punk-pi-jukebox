@@ -348,9 +348,18 @@ class JukeboxApp:
         self.stop_nfc_config_mode = True
         self.music_player.stop()
         
+        # Update RFID display in debug window to show we're waiting
+        if self.debug_window and self.debug_window.winfo_exists():
+            if hasattr(self, 'rfid_display'):
+                self.rfid_display.config(
+                    text="⏳ Waiting for stop NFC tag...\nTap tag now!",
+                    fg='orange'
+                )
+        
         messagebox.showinfo(
             "Configure Stop NFC",
-            "Tap the NFC tag you want to use as the stop command."
+            "Tap the NFC tag you want to use as the stop command.\n\n"
+            "This tag will stop music playback when tapped."
         )
         
         logger.info("Waiting for stop NFC configuration...")
@@ -410,10 +419,33 @@ class JukeboxApp:
         if self.stop_nfc_config_mode:
             self.config.set_stop_nfc_id(nfc_id)
             self.stop_nfc_config_mode = False
-            messagebox.showinfo(
-                "Stop NFC Configured",
-                f"Stop NFC ID set to: {nfc_id}"
-            )
+            
+            # Auto-save the configuration
+            if self.config.save():
+                messagebox.showinfo(
+                    "Stop NFC Configured",
+                    f"Stop NFC ID set to: {nfc_id}\n\nConfiguration saved!"
+                )
+            else:
+                messagebox.showerror(
+                    "Save Failed",
+                    f"Stop NFC ID set to: {nfc_id}\n\nBut failed to save to config file."
+                )
+            
+            # Update debug window if open
+            if self.debug_window and self.debug_window.winfo_exists():
+                # Update stop NFC ID label
+                for widget in self.debug_window.winfo_children():
+                    if isinstance(widget, tk.Label) and "Stop NFC ID:" in widget.cget("text"):
+                        widget.config(text=f"Stop NFC ID: {nfc_id}")
+                
+                # Reset RFID display
+                if hasattr(self, 'rfid_display'):
+                    self.rfid_display.config(
+                        text=f"✓ Stop NFC configured: {nfc_id}",
+                        fg='green'
+                    )
+            
             return
         
         # If in RFID read mode
