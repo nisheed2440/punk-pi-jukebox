@@ -35,12 +35,17 @@ sudo apt-get install -y \
     libportmidi-dev
 
 echo ""
-echo "Installing image processing libraries..."
+echo "Installing image processing libraries (for Pillow)..."
 sudo apt-get install -y \
     libjpeg-dev \
     zlib1g-dev \
     libpng-dev \
-    libtiff-dev
+    libtiff5-dev \
+    libopenjp2-7-dev \
+    liblcms2-dev \
+    libwebp-dev \
+    libharfbuzz-dev \
+    libfribidi-dev
 
 echo ""
 echo "Installing SPI and GPIO libraries (for RFID)..."

@@ -75,6 +75,12 @@ install_package "libjpeg-dev"
 install_package "zlib1g-dev"
 install_package "libpng-dev"
 
+# Additional Pillow dependencies
+install_package "libtiff5-dev"
+install_package "libopenjp2-7-dev"
+install_package "liblcms2-dev"
+install_package "libwebp-dev"
+
 echo ""
 echo "✓ System dependencies installed"
 
@@ -106,6 +112,17 @@ echo ""
 echo "Installing Python packages (this will take 15-30 minutes)..."
 echo "Installing pillow..."
 pip install pillow==10.1.0 --no-cache-dir
+
+if [ $? -ne 0 ]; then
+    echo "⚠ Pillow installation failed, trying older version..."
+    pip install pillow==9.5.0 --no-cache-dir
+    
+    if [ $? -ne 0 ]; then
+        echo "⚠ Pillow still failing, using system package instead..."
+        sudo apt-get install -y python3-pil
+        echo "✓ Using system Pillow package"
+    fi
+fi
 sleep 10
 
 echo "Installing pygame (this is the slowest - may take 20+ minutes)..."
@@ -139,6 +156,20 @@ echo "✓ Music directory created"
 echo ""
 echo "Generating fallback album art..."
 python create_fallback_art.py
+
+if [ $? -ne 0 ]; then
+    echo "⚠ Fallback art generation failed (Pillow issue)"
+    echo "  Creating simple fallback image instead..."
+    # Create a simple black PNG as fallback
+    if command -v convert &> /dev/null; then
+        convert -size 600x600 xc:black -pointsize 40 -fill gray \
+                -gravity center -annotate +0+0 "No Album Art" \
+                fallback_albumart.png
+        echo "✓ Created basic fallback image"
+    else
+        echo "  Skipping fallback art - will use solid color"
+    fi
+fi
 
 # Create initial config
 echo ""

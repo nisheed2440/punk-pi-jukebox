@@ -203,6 +203,26 @@ The app stores configuration in `config.json`:
 
 ## Troubleshooting
 
+### Pillow (PIL) Installation Fails
+
+If you get `ModuleNotFoundError: No module named 'PIL'`:
+
+```bash
+# Quick fix
+./fix_pillow.sh
+```
+
+Or manually:
+```bash
+# Install image libraries
+sudo apt-get install -y libjpeg-dev libpng-dev libtiff5-dev \
+    libopenjp2-7-dev liblcms2-dev libwebp-dev
+
+# Try installing Pillow again
+source venv/bin/activate
+pip install --no-cache-dir pillow
+```
+
 ### Pygame Installation Fails (SDL2 Error)
 
 If you get an error about `sdl2-config` not found:
